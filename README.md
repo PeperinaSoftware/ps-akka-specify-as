@@ -15,13 +15,13 @@ Clone this template repository, which contains:
 
 Your task is to implement the following Akka SDK components:
 
-* Reservation endpoint
-* Time slot entity
-* Reservation entity
-* Booking workflow
-* TimeSlot view
-* Reservation to time slot consumer
-* Time slot to reservation consumer
+* Reservation [endpoint](https://doc.akka.io/java/http-endpoints.html)
+* Time slot [entity](https://doc.akka.io/java/event-sourced-entities.html)
+* Reservation [entity](https://doc.akka.io/java/event-sourced-entities.html)
+* Booking [workflow](https://doc.akka.io/java/workflows.html)
+* TimeSlot [view](https://doc.akka.io/java/views.html)
+* Reservation to time slot [consumer](https://doc.akka.io/java/consuming-producing.html)
+* Time slot to reservation [consumer](https://doc.akka.io/java/consuming-producing.html)
 
 ### Implementation Guidelines
 
