@@ -210,7 +210,7 @@ Response: <code>TimeSlot.State</code>
 <td colspan=2>
 Response: TimeSlotView.TimeSlots</br>
 <code>
-  public record TimeSlots(List &lt;TimeSlotRow&gt; timeSlots) {}
+  public record TimeSlots(List&lt;TimeSlotRow&gt; timeSlots) {}
   public record TimeSlotRow(
       String timeSlotId,
       Instant startTime,
