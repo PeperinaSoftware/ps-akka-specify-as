@@ -193,7 +193,7 @@ public interface Reservation {
     public State onEvent(Event.StudentUnavailable event) {
       return new State(
           reservationId,
-          new Participant(student.participantId(), student.participantType(), student.timeSlotId(), ParticipantStatus.unavailable),
+          event.student,
           instructor,
           aircraft,
           reservationTime,
@@ -208,7 +208,7 @@ public interface Reservation {
       return new State(
           reservationId,
           student,
-          new Participant(instructor.participantId(), instructor.participantType(), instructor.timeSlotId(), ParticipantStatus.available),
+          event.instructor,
           aircraft,
           reservationTime,
           status);
@@ -218,7 +218,7 @@ public interface Reservation {
       return new State(
           reservationId,
           student,
-          new Participant(instructor.participantId(), instructor.participantType(), instructor.timeSlotId(), ParticipantStatus.unavailable),
+          event.instructor,
           aircraft,
           reservationTime,
           status);
@@ -233,7 +233,7 @@ public interface Reservation {
           reservationId,
           student,
           instructor,
-          new Participant(aircraft.participantId(), aircraft.participantType(), aircraft.timeSlotId(), ParticipantStatus.available),
+          event.aircraft,
           reservationTime,
           status);
     }
@@ -243,7 +243,7 @@ public interface Reservation {
           reservationId,
           student,
           instructor,
-          new Participant(aircraft.participantId(), aircraft.participantType(), aircraft.timeSlotId(), ParticipantStatus.unavailable),
+          event.aircraft,
           reservationTime,
           status);
     }
