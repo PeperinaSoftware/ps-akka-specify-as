@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 // This class is responsible for consuming events from the booking
 // slot entity and turning those into command calls on the
 // participant slot entity
-@ComponentId("blooking-slot-consumer")
+@ComponentId("booking-slot-consumer")
 @Consume.FromEventSourcedEntity(BookingSlotEntity.class)
 public class SlotToParticipantConsumer extends Consumer {
 

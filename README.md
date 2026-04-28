@@ -31,7 +31,7 @@ Your task is to implement the following Akka SDK components:
 
 * Flights [endpoint](https://doc.akka.io/java/http-endpoints.html)
 * BookingSlot [entity](https://doc.akka.io/java/event-sourced-entities.html)
-* Timeslot [view](https://doc.akka.io/java/views.html)
+* ParticipantSlots [view](https://doc.akka.io/java/views.html)
 
 ### Implementation Guidelines
 
@@ -242,7 +242,7 @@ You'll see something like this in the service's log:
 12:49:38.614 INFO  i.e.a.SlotToParticipantConsumer - Canceling booking booking4 for participant alice
 ```
 
-The timeslot entity should now be empty (no availability, no bookings):
+The `Timeslot` which is the internal state of the Booking Slot Entity; should now be empty (no availability, no bookings):
 ```
 curl -H "Content-Type: application/json" localhost:9000/flight/availability/bestslot
 ```
