@@ -78,6 +78,12 @@ Instant reservationTime
 </code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>akka.Done</code>
+</td>
+</tr>
+<tr>
 <td>POST</td>
 <td>/flight/reservation<br/><br/><code>curl -X POST \
 'http://localhost:9000/flight/reservation' \
@@ -104,6 +110,12 @@ Instant reservationTime
 </code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>akka.Done</code>
+</td>
+</tr>
+<tr>
 <td>PUT</td>
 <td>/flight/reservation-cancel<br/><br/><code>curl -X PUT \
 'http://localhost:9000/flight/reservation-cancel' \
@@ -115,11 +127,23 @@ Instant reservationTime
 String reservationId</code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>akka.Done</code>
+</td>
+</tr>
+<tr>
 <td>GET</td>
 <td>/flight/reservation<br/><br/><code>curl -X GET \
 'http://localhost:8080/flight/reservation/res-123'</code></td>
 <td><code>
 String reservationId</code></td>
+</tr>
+<tr>
+<td></td>
+<td colspan=2>
+Response: <code>Reservation.State</code>
+</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -140,6 +164,12 @@ Instant startTime
 </code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>akka.Done</code>
+</td>
+</tr>
+<tr>
 <td>PUT</td>
 <td>/flight/make-time-slot-unavailable<br/><br/><code>curl -X PUT \
 'http://localhost:8080/flight/make-time-slot-unavailable' \
@@ -151,6 +181,12 @@ Instant startTime
 String timeSlotId</code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>akka.Done</code>
+</td>
+</tr>
+<tr>
 <td>GET</td>
 <td>/flight/time-slot<br/><br/><code>curl -X GET \
 'http://localhost:8080/flight/time-slot/ts-123'</code></td>
@@ -158,10 +194,32 @@ String timeSlotId</code></td>
 String timeSlotId</code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: <code>TimeSlot.State</code>
+</td>
+</tr>
+<tr>
 <td>GET</td>
 <td>/flight/time-slot-view-all<br/><br/><code>curl -X GET \
 'http://localhost:8080/flight/time-slot-view-all'</code></td>
 <td></td>
+</tr>
+<tr>
+<td></td>
+<td colspan=2>
+Response: TimeSlotView.TimeSlots</br>
+<code>
+  public record TimeSlots(List &lt;TimeSlotRow&gt; timeSlots) {}
+  public record TimeSlotRow(
+      String timeSlotId,
+      Instant startTime,
+      String status,
+      String participantId,
+      String participantType,
+      String reservationId) {}
+</code>
+</td>
 </tr>
 <tr>
 <td>POST</td>
@@ -179,6 +237,22 @@ Instant timeBegin
 Instant timeEnd</code></td>
 </tr>
 <tr>
+<td></td>
+<td colspan=2>
+Response: TimeSlotView.TimeSlots</br>
+<code>
+  public record TimeSlots(List&lt;TimeSlotRow&gt; timeSlots) {}
+  public record TimeSlotRow(
+      String timeSlotId,
+      Instant startTime,
+      String status,
+      String participantId,
+      String participantType,
+      String reservationId) {}
+</code>
+</td>
+</tr>
+<tr>
 <td>POST</td>
 <td>/flight/time-slot-view-by-participant-and-time-range<br/><br/><code>curl -X POST \
 'http://localhost:8080/flight/time-slot-view-by-participant-and-time-range' \
@@ -194,6 +268,22 @@ String participantId
 String participantType
 Instant timeBegin
 Instant timeEnd</code></td>
+</tr>
+<tr>
+<td></td>
+<td colspan=2>
+Response: TimeSlotView.TimeSlots</br>
+<code>
+  public record TimeSlots(List&lt;TimeSlotRow&gt; timeSlots) {}
+  public record TimeSlotRow(
+      String timeSlotId,
+      Instant startTime,
+      String status,
+      String participantId,
+      String participantType,
+      String reservationId) {}
+</code>
+</td>
 </tr>
 </table>
 
