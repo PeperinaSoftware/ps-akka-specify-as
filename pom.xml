@@ -6,13 +6,13 @@
     <artifactId>akka-javasdk-parent</artifactId>
     <version>3.0.2</version>
   </parent>
-  
+
   <groupId>io.example</groupId>
-  <artifactId>wing-plan</artifactId>
+  <artifactId>akka-dev-cert</artifactId>
   <version>v.0.0.1</version>
   <packaging>jar</packaging>
 
-  <name>wing-plan</name>
+  <name>akka-dev-cert</name>
   <properties>
 
   </properties>
