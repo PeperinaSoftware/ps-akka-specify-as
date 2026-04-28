@@ -5,9 +5,16 @@ import akka.javasdk.annotations.Component;
 import akka.javasdk.eventsourcedentity.EventSourcedEntity;
 import akka.javasdk.eventsourcedentity.EventSourcedEntityContext;
 import io.example.domain.BookingEvent;
+import io.example.domain.BookingEvent.ParticipantBooked;
+import io.example.domain.BookingEvent.ParticipantCanceled;
+import io.example.domain.BookingEvent.ParticipantMarkedAvailable;
+import io.example.domain.BookingEvent.ParticipantUnmarkedAvailable;
 import io.example.domain.Participant;
+import io.example.domain.Participant.ParticipantType;
 import io.example.domain.Timeslot;
+import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,28 +29,61 @@ public class BookingSlotEntity extends EventSourcedEntity<Timeslot, BookingEvent
     }
 
     public Effect<Done> markSlotAvailable(Command.MarkSlotAvailable cmd) {
-        return effects().error("not yet implemented");
+        Participant p = cmd.participant();
+        if (currentState().isWaiting(p.id(), p.participantType())) {
+            return effects().error("Participant already available for this slot");
+        }
+        if (!currentState().findBooking(p.id()).isEmpty()) {
+            return effects().error("Participant already booked for this slot");
+        }
+        return effects()
+                .persist(new ParticipantMarkedAvailable(entityId, p.id(), p.participantType()))
+                .thenReply(__ -> Done.done());
     }
 
     public Effect<Done> unmarkSlotAvailable(Command.UnmarkSlotAvailable cmd) {
-        return effects().error("not yet implemented");
+        Participant p = cmd.participant();
+        return effects()
+                .persist(new ParticipantUnmarkedAvailable(entityId, p.id(), p.participantType()))
+                .thenReply(__ -> Done.done());
     }
 
     // NOTE: booking a slot should produce 3
     // `ParticipantBooked` events
     public Effect<Done> bookSlot(Command.BookReservation cmd) {
-        return effects().error("not yet implemented");
+        try {
+            if (Instant.parse(entityId).isBefore(Instant.now())) {
+                return effects().error("Slot is in the past");
+            }
+        } catch (Exception e) {
+            return effects().error("Invalid slot ID — expected ISO-8601 datetime: " + entityId);
+        }
+        if (!currentState().isBookable(cmd.studentId(), cmd.aircraftId(), cmd.instructorId())) {
+            return effects().error("Not all participants are available for this slot");
+        }
+        return effects().persist(
+                new ParticipantBooked(entityId, cmd.studentId(), ParticipantType.STUDENT, cmd.bookingId()),
+                new ParticipantBooked(entityId, cmd.aircraftId(), ParticipantType.AIRCRAFT, cmd.bookingId()),
+                new ParticipantBooked(entityId, cmd.instructorId(), ParticipantType.INSTRUCTOR, cmd.bookingId())
+        ).thenReply(__ -> Done.done());
     }
 
     // NOTE: canceling a booking should produce 3
     // `ParticipantCanceled` events
     public Effect<Done> cancelBooking(String bookingId) {
-        return effects().error("not yet implemented");
-
+        List<Timeslot.Booking> bookings = currentState().findBooking(bookingId);
+        if (bookings.isEmpty()) {
+            return effects().error("Booking not found: " + bookingId);
+        }
+        List<BookingEvent> events = bookings.stream()
+                .map(b -> (BookingEvent) new ParticipantCanceled(
+                        entityId, b.participant().id(), b.participant().participantType(), bookingId))
+                .toList();
+        return effects().persistAll(events).thenReply(__ -> Done.done());
     }
 
     public ReadOnlyEffect<Timeslot> getSlot() {
-        return effects().error("not yet implemented");
+        return effects().reply(currentState());
     }
 
     @Override
@@ -55,9 +95,12 @@ public class BookingSlotEntity extends EventSourcedEntity<Timeslot, BookingEvent
 
     @Override
     public Timeslot applyEvent(BookingEvent event) {
-        // Supply your own implementation to update state based
-        // on the event
-        return currentState();
+        return switch (event) {
+            case BookingEvent.ParticipantMarkedAvailable e -> currentState().reserve(e);
+            case BookingEvent.ParticipantUnmarkedAvailable e -> currentState().unreserve(e);
+            case BookingEvent.ParticipantBooked e -> currentState().book(e);
+            case BookingEvent.ParticipantCanceled e -> currentState().cancelBooking(e.bookingId());
+        };
     }
 
     public sealed interface Command {

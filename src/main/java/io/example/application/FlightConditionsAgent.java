@@ -5,45 +5,51 @@ import akka.javasdk.annotations.Component;
 import akka.javasdk.annotations.FunctionTool;
 
 /*
- * The flight conditions agent is responsible for making a determination about the flight
- * conditions for a given day and time. You will need to clearly define the success criteria
- * for the report and instruct the agent (in the system prompt) about the schema of
- * the results it must return (the ConditionsReport).
- *
- * Also be sure to provide clear instructions on how and when tools should be invoked
- * in order to generate results.
- *
- * Flight conditions criteria don't need to be exhaustive, but you should supply the
- * criteria so that an agent does not need to make an external HTTP call to query
- * the condition limits.
+ * The flight conditions agent evaluates whether a time slot is safe for flight training.
+ * It calls the getWeatherForecast tool and assesses conditions against VFR minimums:
+ * visibility ≥ 5 miles, wind ≤ 25 knots, no precipitation.
  */
-
 @Component(id = "flight-conditions-agent")
 public class FlightConditionsAgent extends Agent {
 
-    record ConditionsReport(String timeSlotId, Boolean meetsRequirements) {
+    public record ConditionsReport(String timeSlotId, Boolean meetsRequirements) {
     }
 
     private static final String SYSTEM_MESSAGE = """
-            You are an agent responsible for evaluating flight conditions...
+            You are a flight conditions evaluation agent for a flight training scheduler.
+
+            Your job is to determine whether a given time slot is safe for student flight training.
+
+            Instructions:
+            1. Call the getWeatherForecast tool with the provided timeSlotId to retrieve forecast conditions.
+            2. Evaluate the conditions against these VFR minimums:
+               - Visibility: at least 5 miles
+               - Wind speed: no more than 25 knots
+               - Precipitation: none acceptable
+            3. Return a ConditionsReport JSON object with:
+               - "timeSlotId": the input slot ID
+               - "meetsRequirements": true if all criteria pass, false otherwise
+
+            Respond ONLY with a valid JSON object matching the ConditionsReport schema.
+            Do not include any explanation outside of the JSON.
             """.stripIndent();
 
     public Effect<ConditionsReport> query(String timeSlotId) {
-        return effects().systemMessage(SYSTEM_MESSAGE)
-                .userMessage("Validate the conditions...")
+        return effects()
+                .systemMessage(SYSTEM_MESSAGE)
+                .userMessage("Evaluate flight conditions for time slot ID: " + timeSlotId
+                        + ". Call getWeatherForecast first, then return a ConditionsReport JSON.")
                 .responseAs(ConditionsReport.class)
                 .thenReply();
     }
 
-    /*
-     * You can choose to hard code the weather conditions for specific days or you
-     * can actually
-     * communicate with an external weather API. You should be able to get both
-     * suitable weather
-     * conditions and poor weather conditions from this tool function for testing.
-     */
     @FunctionTool(description = "Queries the weather conditions as they are forecasted based on the time slot ID of the training session booking")
     private String getWeatherForecast(String timeSlotId) {
-        return "queried or mock weather conditions.";
+        if (timeSlotId != null && (timeSlotId.contains("storm") || timeSlotId.contains("bad"))) {
+            return "Forecast for slot " + timeSlotId + ": Thunderstorm activity, visibility 1 mile, "
+                    + "wind gusts 45 knots, heavy precipitation. Conditions are below VFR minimums.";
+        }
+        return "Forecast for slot " + timeSlotId + ": Clear skies, visibility 10 miles, "
+                + "wind 8 knots from the west, no precipitation. Conditions are excellent for VFR flight.";
     }
 }
