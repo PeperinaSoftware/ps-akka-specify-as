@@ -4,6 +4,12 @@ The Flight Training Scheduler project serves as the certification test for Akka 
 
 ## Getting Started
 
+### Prerequisites
+
+* Java 21, Eclipse Adoptium recommend
+* Apache Maven version 3.9 or later
+* curl command-line tool
+
 Clone this template repository, which contains:
 
 * Project structure and configuration
@@ -328,7 +334,7 @@ The Flight Training Scheduler application requires you to create 7 components wi
 
 This component-based architecture leverages Akka SDK's capabilities to create a scalable, event-driven system that manages the complexities of flight training scheduling. Each component has a clear responsibility, promoting modularity and maintainability in the application design.
 
-### Reservation Endpoint
+### Reservation Endpoint [component](https://doc.akka.io/java/http-endpoints.html)
 
 * Defines the external API for the service
 * Implemented as an Akka SDK HTTP Endpoint component
@@ -336,7 +342,7 @@ This component-based architecture leverages Akka SDK's capabilities to create a 
 * Routes requests to appropriate internal components
 * The integration point for the included scheduling GUI
 
-### TimeSlot Entity
+### TimeSlot Entity [component](https://doc.akka.io/java/event-sourced-entities.html)
 
 * Represents individual one-hour time slots for participants (students, instructors, aircraft)
 * Implemented as an Akka SDK Event sourced entity component
@@ -348,7 +354,7 @@ This component-based architecture leverages Akka SDK's capabilities to create a 
   * status: Enum (available, unavailable, scheduled)
   * reservationId: Associated reservation (if scheduled)
 
-### Reservation Entity
+### Reservation Entity [component](https://doc.akka.io/java/event-sourced-entities.html)
 
 * Represents a flight lesson reservation
 * Implemented as an Akka SDK Event sourced entity component
@@ -360,7 +366,7 @@ This component-based architecture leverages Akka SDK's capabilities to create a 
   * reservationTime: Time of the reservation
   * status: Enum (pending, confirmed, cancelled)
 
-### Booking Workflow
+### Booking Workflow [component](https://doc.akka.io/java/workflows.html)
 
 * Defines the steps for creating a new reservation
 * Implemented as an Akka SDK Workflow component
@@ -370,7 +376,7 @@ This component-based architecture leverages Akka SDK's capabilities to create a 
   3. Query TimeSlot view for available aircraft
   4. If all participants are available, create a reservation
 
-### TimeSlot View
+### TimeSlot View [component](https://doc.akka.io/java/views.html)
 
 * Consumes TimeSlot events and projects them into a view table
 * Implemented as an Akka SDK View component
@@ -394,14 +400,14 @@ SELECT * as timeSlots
    AND startTime < :timeEnd
 ```
 
-### Reservation to TimeSlot Consumer
+### Reservation to TimeSlot Consumer [component](https://doc.akka.io/java/consuming-producing.html)
 
 * Processes reservation events, such as when a reservation is confirmed
 * Implemented as an Akka SDK Consumer component
 * Transforms reservation events into TimeSlot commands
 * Calls TimeSlot entities to update their status based on reservations
 
-### TimeSlot to Reservation Consumer
+### TimeSlot to Reservation Consumer [component](https://doc.akka.io/java/consuming-producing.html)
 
 * Processes TimeSlot events, such as when a student TimeSlot reservation request has been accepted
 * Implemented as an Akka SDK Consumer component
@@ -445,11 +451,11 @@ The entire flow creates a reliable and consistent system for managing calendar a
 
 ### Initial Booking Request
 
-The reservation process begins when a student submits a booking request through the ReservationEndpoint, providing their reservationId, studentId, and desired reservationTime. The endpoint forwards this request to the BookingWorkflow component using the component client.
+The reservation process begins when a student submits a booking request through the ReservationEndpoint [component](https://doc.akka.io/java/http-endpoints.html), providing their reservationId, studentId, and desired reservationTime. The endpoint forwards this request to the BookingWorkflow component using the [component client](https://doc.akka.io/java/component-and-service-calls.html#_component_client).
 
 ### Booking Workflow Steps
 
-The BookingWorkflow executes a four-step process to validate and initiate the reservation:
+The BookingWorkflow [component](https://doc.akka.io/java/workflows.html) executes a four-step process to validate and initiate the reservation:
 
 1. Verify student availability by querying the TimeSlot view for the requested hour
 2. Search for available instructor time slots during the requested hour
@@ -460,7 +466,7 @@ The workflow terminates early if any of the first three steps fail to find avail
 
 ### Reservation Creation
 
-Upon receiving the create command, the ReservationEntity:
+Upon receiving the create command, the ReservationEntity [component](https://doc.akka.io/java/event-sourced-entities.html):
 
 * Creates a new reservation in pending status
 * It emits four distinct events:
@@ -471,7 +477,7 @@ Upon receiving the create command, the ReservationEntity:
 
 ### Time Slot Request Processing
 
-The ReservationToTimeSlotConsumer processes the three "wants time slot" events by:
+The ReservationToTimeSlotConsumer [component](https://doc.akka.io/java/consuming-producing.html) processes the three "wants time slot" events by:
 
 * Converting each event into a command to reserve the specific time slot
 * Sending these commands to the appropriate TimeSlotEntity
@@ -480,7 +486,7 @@ The ReservationToTimeSlotConsumer processes the three "wants time slot" events b
 
 ### Reservation Confirmation Flow
 
-The TimeSlotToReservationConsumer:
+The TimeSlotToReservationConsumer [component](https://doc.akka.io/java/consuming-producing.html):
 
 * Processes the accepted/rejected events from time slots
 * Converts these events into acceptance or rejection commands
