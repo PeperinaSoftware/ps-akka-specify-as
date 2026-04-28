@@ -525,7 +525,7 @@ Process the HTTP request to start a reservation booking workflow.
 
 ![booking workflow 8](images/booking-workflow-8-0.png)
 
-Process the four workflow steps. First, query the time slot view to check the availability of the student, an instructor, and an aircraft. If all are available, send a command to create a reservation and terminate the workflow.
+Process the four workflow steps. First, query the time slot view to check the availability of the student, an instructor, and an aircraft. If all are available, send a command to create a reservation and [terminate the workflow](https://doc.akka.io/java/workflows.html#_workflow_definition).
 
 The reservation is created with a pending status. It also emits events that trigger reservation requests for all three participant time slots.
 
