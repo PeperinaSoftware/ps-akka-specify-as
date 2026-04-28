@@ -574,3 +574,7 @@ The UI application is available at: [akka-dev-cert-ui](https://github.com/akka/a
 * If you encounter any issues with the UI or its integration with your implementation, refer to the troubleshooting section in the UI repository's README
 
 Using this Testing UI in conjunction with the provided test suite will give you a comprehensive view of your implementation's functionality, helping ensure that your solution meets all certification requirements.
+
+## Caveat Emptor
+
+This repository and its code are provided as-is and are not covered by Akka security policies. There are no guarantees of security, stability, or support. Use at your own risk.
