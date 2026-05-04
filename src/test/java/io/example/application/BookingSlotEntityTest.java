@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 
 public class BookingSlotEntityTest {
 
-    static final String FUTURE_SLOT = "2099-01-01T10:00:00Z";
-    static final String PAST_SLOT   = "2020-01-01T10:00:00Z";
+    static final String FUTURE_SLOT = "2099-01-01-10";
+    static final String PAST_SLOT   = "2020-01-01-10";
 
     private static final Participant STUDENT    = new Participant("s1", ParticipantType.STUDENT);
     private static final Participant INSTRUCTOR = new Participant("i1", ParticipantType.INSTRUCTOR);

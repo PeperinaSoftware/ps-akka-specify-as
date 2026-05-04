@@ -12,7 +12,7 @@ import io.example.domain.BookingEvent.ParticipantUnmarkedAvailable;
 import io.example.domain.Participant;
 import io.example.domain.Participant.ParticipantType;
 import io.example.domain.Timeslot;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import org.slf4j.Logger;
@@ -52,11 +52,17 @@ public class BookingSlotEntity extends EventSourcedEntity<Timeslot, BookingEvent
     // `ParticipantBooked` events
     public Effect<Done> bookSlot(Command.BookReservation cmd) {
         try {
-            if (Instant.parse(entityId).isBefore(Instant.now())) {
+            String[] parts = entityId.split("-");
+            int year  = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]);
+            int day   = Integer.parseInt(parts[2]);
+            int hour  = Integer.parseInt(parts[3]);
+            LocalDateTime slotTime = LocalDateTime.of(year, month, day, hour, 0);
+            if (slotTime.isBefore(LocalDateTime.now())) {
                 return effects().error("Slot is in the past");
             }
         } catch (Exception e) {
-            return effects().error("Invalid slot ID — expected ISO-8601 datetime: " + entityId);
+            return effects().error("Invalid slot ID — expected format YYYY-MM-DD-HH: " + entityId);
         }
         if (!currentState().isBookable(cmd.studentId(), cmd.aircraftId(), cmd.instructorId())) {
             return effects().error("Not all participants are available for this slot");
