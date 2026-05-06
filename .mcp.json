@@ -1,11 +1,3 @@
 {
-  "mcpServers": {
-    "akka": {
-      "command": "akka",
-      "args": [
-        "mcp",
-        "serve"
-      ]
-    }
-  }
+  "mcpServers": {}
 }
