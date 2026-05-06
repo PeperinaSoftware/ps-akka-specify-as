@@ -59,9 +59,9 @@ curl -v -X DELETE -H "Content-Type: application/json" localhost:9000/flight/book
 Response: HTTP/1.1 200 OK
 
 Server logs during cancel:
-11:25:10.482 INFO i.e.a.SlotToParticipantConsumer - Canceling participant superteacher for slot 2026-12-10-10
-11:25:10.495 INFO i.e.a.SlotToParticipantConsumer - Canceling participant superplane for slot 2026-12-10-10
-11:25:10.506 INFO i.e.a.SlotToParticipantConsumer - Canceling participant alice for slot 2026-12-10-10
+11:25:10.482 INFO i.e.a.SlotToParticipantConsumer - Canceling booking booking4 for participant superteacher
+11:25:10.495 INFO i.e.a.SlotToParticipantConsumer - Canceling booking booking4 for participant superplane
+11:25:10.506 INFO i.e.a.SlotToParticipantConsumer - Canceling booking booking4 for participant alice
 
 ## 10. GET Slot State After Cancel
 Request:

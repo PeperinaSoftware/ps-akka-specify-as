@@ -48,7 +48,7 @@ public class SlotToParticipantConsumer extends Consumer {
                 yield effects().done();
             }
             case BookingEvent.ParticipantCanceled e -> {
-                logger.info("Canceling participant {} for slot {}", e.participantId(), e.slotId());
+                logger.info("Canceling booking {} for participant {}", e.bookingId(), e.participantId());
                 client.forEventSourcedEntity(id)
                         .method(ParticipantSlotEntity::cancel)
                         .invoke(new Commands.Cancel(e.slotId(), e.participantId(), e.participantType(), e.bookingId()));
