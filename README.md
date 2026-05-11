@@ -263,3 +263,27 @@ curl -H "Content-Type: application/json" localhost:9000/flight/availability/2025
   "available": []
 }
 ```
+
+## Running Locally
+
+### Prerequisites
+- Java 21
+- Maven 3.9+
+- A free Groq API key (get one at https://console.groq.com)
+
+### Setup
+
+1. Export your Groq API key:
+```bash
+export GROQ_API_KEY="your-groq-api-key"
+```
+
+2. Run the service:
+```bash
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 mvn compile exec:java
+```
+
+3. The service will start at http://localhost:9000
+
+### Model Configuration
+This implementation uses Groq's `llama-3.1-8b-instant` model via the OpenAI-compatible API. The configuration is in `src/main/resources/application.conf`.
